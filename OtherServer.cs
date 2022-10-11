@@ -82,7 +82,12 @@ namespace MasterServer
                 return;
             }
             status = process.HasExited ? "Terminated" : "Running";
-            ramUsage = process.HasExited ? 0 : process.PrivateMemorySize64;
+            ramUsage = GetRamUsage();
+        }
+
+        public long GetRamUsage()
+        {
+            return process.HasExited ? 0 : process.WorkingSet64;
         }
 
         public void Restart()

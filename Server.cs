@@ -112,7 +112,7 @@ namespace MasterServer
                         servers[i].notRunningTimes = 0;
                         if (servers[i].shouldRestartIfMoreRam)
                         {
-                            long ram = servers[i].process.WorkingSet64;
+                            long ram = servers[i].GetRamUsage();
                             Logger.Log(servers[i].name + " is using " + SizeConverter.ByteSizeToString(ram) + " of ram");
                             if(ram > servers[i].restartMaxRam)
                             {
