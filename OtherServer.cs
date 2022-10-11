@@ -1,4 +1,5 @@
 ﻿using ComputerUtils.Logging;
+using ComputerUtils.VarUtils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,6 +23,8 @@ namespace MasterServer
         public int maxLogLength { get; set; } = 50000;
         public bool shouldRestartInInterval { get; set; } = false;
         public int restartIntervalInSeconds { get; set; } = 60 * 60 * 24;
+        public long ramUsage { get; set; } = 0;
+        public string ramUsageString { get { return SizeConverter.ByteSizeToString(ramUsage); } }
         public bool shouldRestartIfMoreRam { get; set; } = false;
         public string status { get; set; } = "Starting up";
         public int restartMaxRam { get; set; } = 200 * 1024 * 1024;
@@ -77,6 +80,7 @@ namespace MasterServer
                 return;
             }
             status = process.HasExited ? "Terminated" : "Running";
+            ramUsage = process.HasExited ? 0 : process.PrivateMemorySize64;
         }
 
         public void Restart()

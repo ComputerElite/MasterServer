@@ -82,9 +82,8 @@
 
             function Save(serverName) {
                 TextBoxText(`${serverName}box`, `Requesting restart...`)
-                var toSave = servers
-                toSave = toSave.filter(x => x.name != serverName)
-                toSave.push({
+                servers = servers.filter(x => x.name != serverName)
+                servers.push({
                     name: serverName,
                     dll: document.getElementById(`${serverName}Location`).value,
                     shouldRestartInInterval: document.getElementById(`${serverName}ShouldRestartInterval`).checked,
@@ -92,7 +91,7 @@
                     shouldRestartIfMoreRam: document.getElementById(`${serverName}ShouldRestartRam`).checked,
                     restartMaxRam: parseInt(document.getElementById(`${serverName}RestartRam`).value) * 1024 * 1024,
                 })
-                POSTRequestWithResponse(`/api/servers`, `${serverName}box`, JSON.stringify(toSave))
+                POSTRequestWithResponse(`/api/servers`, `${serverName}box`, JSON.stringify(toSave), true)
             }
 
             function AddServer() {
@@ -103,9 +102,8 @@
 
             function Remove(serverName) {
                 TextBoxText(`${serverName}box`, `Requesting removal...`)
-                var toSave = servers
-                toSave = toSave.filter(x => x.name != serverName)
-                POSTRequestWithResponse(`/api/servers`, `${serverName}box`, JSON.stringify(toSave))
+                servers = servers.filter(x => x.name != serverName)
+                POSTRequestWithResponse(`/api/servers`, `${serverName}box`, JSON.stringify(servers))
             }
 
             function Restart(serverName) {
@@ -145,6 +143,7 @@
                 return `<div class="tabcontent" id="${server.name}" class="active">
                             <div class="big">Last Restart: <b>${new Date(server.fakeLastStartTime).toLocaleString()}</b></div>
                             <div class="big">Current state: <b>${server.status}</b></div>
+                            <div class="big">Ram usage: <b>${server.ramUsageString}</b></div>
                             <label>
                                 <text>Dll Location</text>
                                 <input type="text" class="wide" id="${server.name}Location" value="${server.dll}">

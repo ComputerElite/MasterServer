@@ -112,7 +112,8 @@ namespace MasterServer
                         servers[i].notRunningTimes = 0;
                         if (servers[i].shouldRestartIfMoreRam)
                         {
-                            long ram = servers[i].process.PrivateMemorySize64;
+                            long ram = servers[i].process.WorkingSet64;
+                            Logger.Log(servers[i].name + " is using " + SizeConverter.ByteSizeToString(ram) + " of ram");
                             if(ram > servers[i].restartMaxRam)
                             {
                                 string message = "Restarting " + servers[i].name + " as it uses " + SizeConverter.ByteSizeToString(ram) + " ram of allowed " + SizeConverter.ByteSizeToString(servers[i].restartMaxRam);
@@ -210,6 +211,10 @@ namespace MasterServer
             server.AddRoute("GET", "/api/servers/", new Func<ServerRequest, bool>(request =>
             {
                 if (!IsUserAdmin(request)) return true;
+                for(int i = 0; i < servers.Count; i++)
+                {
+                    config.serversToWatch[i].UpdateStatus();
+                }
                 request.SendString(JsonSerializer.Serialize(servers));
                 return true;
             }));
