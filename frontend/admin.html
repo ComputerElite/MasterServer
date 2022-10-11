@@ -81,7 +81,7 @@
             }
 
             function Save(serverName) {
-                TextBoxText(`${serverName}box`, `Requesting restart...`)
+                TextBoxText(`${serverName}box`, `Requesting save...`)
                 servers = servers.filter(x => x.name != serverName)
                 servers.push({
                     name: serverName,
