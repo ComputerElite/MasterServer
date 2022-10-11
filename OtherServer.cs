@@ -87,6 +87,12 @@ namespace MasterServer
 
         public long GetRamUsage()
         {
+            Logger.Log("Working " + SizeConverter.ByteSizeToString(process.WorkingSet64));
+            Logger.Log("Private " + SizeConverter.ByteSizeToString(process.PrivateMemorySize64));
+            Logger.Log("Paged " + SizeConverter.ByteSizeToString(process.PagedMemorySize64));
+            Logger.Log("PagedSystem " + SizeConverter.ByteSizeToString(process.PagedSystemMemorySize64));
+            Logger.Log("NonPaged " + SizeConverter.ByteSizeToString(process.NonpagedSystemMemorySize64));
+            Logger.Log("Virtual " + SizeConverter.ByteSizeToString(process.VirtualMemorySize64));
             return process.HasExited ? 0 : process.WorkingSet64;
         }
 
