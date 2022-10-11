@@ -26,7 +26,7 @@ echo Changelog:
 echo.
 echo %changelog%\nFull changes: https://github.com/ComputerElite/MasterServer/commit/%id%
 
-start "" https://master.rui2015.me/admin
+start "" https://manage.rui2015.me/admin
 cd..
 cd..
 cd..
