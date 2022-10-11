@@ -87,6 +87,7 @@ namespace MasterServer
 
         public long GetRamUsage()
         {
+            Process process = Process.GetProcessById(this.process.Id);
             Logger.Log("Working " + SizeConverter.ByteSizeToString(process.WorkingSet64));
             Logger.Log("Private " + SizeConverter.ByteSizeToString(process.PrivateMemorySize64));
             Logger.Log("Paged " + SizeConverter.ByteSizeToString(process.PagedMemorySize64));
