@@ -91,7 +91,7 @@
                     shouldRestartIfMoreRam: document.getElementById(`${serverName}ShouldRestartRam`).checked,
                     restartMaxRam: parseInt(document.getElementById(`${serverName}RestartRam`).value) * 1024 * 1024,
                 })
-                POSTRequestWithResponse(`/api/servers`, `${serverName}box`, JSON.stringify(toSave), true)
+                POSTRequestWithResponse(`/api/servers`, `${serverName}box`, JSON.stringify(servers), true)
             }
 
             function AddServer() {
