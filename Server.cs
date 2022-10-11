@@ -56,7 +56,7 @@ namespace MasterServer
             return -1;
         }
 
-        public void SendMasterWebhookMessage(string title, string message, int color)
+        public static void SendMasterWebhookMessage(string title, string message, int color)
         {
             if (config.masterWebhookUrl == "") return;
             try

@@ -63,7 +63,9 @@ namespace MasterServer
                         if (log.Length >= maxLogLength) log = log.Substring(log.Length - maxLogLength, maxLogLength);
                     } catch(Exception e)
                     {
-                        Logger.Log(e.ToString(), LoggingType.Error);
+                        Logger.Log("Error while reading Output of " + name + ", restarting server: " + e.ToString(), LoggingType.Error);
+                        Server.SendMasterWebhookMessage("Error while reading output", "Error while reading Output of " + name + ", restarting server", 0xFFFF00);
+                        Restart();
                     }
                 }
             });
