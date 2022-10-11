@@ -89,7 +89,7 @@ namespace MasterServer
         public void Kill()
         {
             Logger.Log("Killing server " + name, LoggingType.Important);
-            if (process.HasExited) return;
+            if (process == null || process.HasExited) return;
             process.Kill();
         }
 
