@@ -81,7 +81,6 @@ namespace MasterServer
                     servers[i].UpdateStatus();
                     if (servers[i].process == null)
                     {
-                        SendMasterWebhookMessage("Process null", servers[i].name + "s Process is null. Cannot check status", 0xFF0000);
                         Logger.Log(servers[i].name + "s Process is null. Cannot check status", LoggingType.Error);
                         servers[i].notRunningTimes++;
                         if (servers[i].notRunningTimes > 1)
@@ -90,11 +89,11 @@ namespace MasterServer
                             servers[i].Restart();
                             continue;
                         }
+                        SendMasterWebhookMessage("Process null", servers[i].name + "s Process is null. Cannot check status", 0xFF0000);
                         continue;
                     }
                     if (servers[i].process.HasExited)
                     {
-                        SendMasterWebhookMessage("Server not running!", servers[i].name + " is not running anymore!!!!", 0xFF0000);
                         Logger.Log(servers[i].name + " is not running anymore!!!!", LoggingType.Warning);
                         servers[i].notRunningTimes++;
                         if (servers[i].notRunningTimes > 1)
@@ -103,6 +102,7 @@ namespace MasterServer
                             servers[i].Restart();
                             continue;
                         }
+                        SendMasterWebhookMessage("Server not running!", servers[i].name + " is not running anymore!!!!", 0xFF0000);
                     } else
                     {
                         if (servers[i].notRunningTimes > 0)

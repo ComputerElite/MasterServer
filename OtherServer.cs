@@ -46,9 +46,12 @@ namespace MasterServer
                 Process[] running = Process.GetProcessesByName("dotnet");
                 foreach(Process p in running)
                 {
-                    Logger.Log(p.ProcessName + " " + p.StartInfo.Arguments, LoggingType.Important);
+                    Logger.Log(p.ProcessName + " " + p.StartInfo.Arguments, LoggingType.Debug);
                 }
-            }catch { }
+            } catch(Exception e)
+            {
+                Logger.Log(e.ToString(), LoggingType.Error);
+            }
             status = "Starting up";
             blockLogging = true;
             lastStartTime = DateTime.Now;
