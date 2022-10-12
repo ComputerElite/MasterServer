@@ -46,7 +46,7 @@ namespace MasterServer
                 Process[] running = Process.GetProcessesByName("dotnet");
                 foreach(Process p in running)
                 {
-                    Logger.Log(p.ProcessName, LoggingType.Important);
+                    Logger.Log(p.ProcessName + " " + p.StartInfo.Arguments, LoggingType.Important);
                 }
             }catch { }
             status = "Starting up";
