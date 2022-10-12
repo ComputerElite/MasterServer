@@ -41,6 +41,14 @@ namespace MasterServer
                 Logger.Log("Will not start " + name + " as it's already been attempted to start less than 20 seconds ago", LoggingType.Warning);
                 return;
             }
+            try
+            {
+                Process[] running = Process.GetProcessesByName("dotnet " + dll);
+                foreach(Process p in running)
+                {
+                    Logger.Log(p.ProcessName, LoggingType.Important);
+                }
+            }catch { }
             status = "Starting up";
             blockLogging = true;
             lastStartTime = DateTime.Now;
