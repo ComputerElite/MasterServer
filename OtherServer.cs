@@ -43,7 +43,7 @@ namespace MasterServer
             }
             try
             {
-                Process[] running = Process.GetProcessesByName("dotnet " + dll);
+                Process[] running = Process.GetProcessesByName("dotnet");
                 foreach(Process p in running)
                 {
                     Logger.Log(p.ProcessName, LoggingType.Important);
