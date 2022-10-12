@@ -36,6 +36,11 @@ namespace MasterServer
         public void Start()
         {
             if (!File.Exists(dll)) return;
+            if(lastStartTime + TimeSpan.FromSeconds(20) > DateTime.Now)
+            {
+                Logger.Log("Will not start " + name + " as it's already been attempted to start less than 20 seconds ago", LoggingType.Warning);
+                return;
+            }
             status = "Starting up";
             blockLogging = true;
             lastStartTime = DateTime.Now;
@@ -87,7 +92,14 @@ namespace MasterServer
 
         public long GetRamUsage()
         {
-            Process process = Process.GetProcessById(this.process.Id);
+            try
+            {
+                Process process = Process.GetProcessById(this.process.Id);
+            } catch(Exception e)
+            {
+                Logger.Log("Could not get ram usage as the server is not running. This should be fixed automatically", LoggingType.Warning);
+                return 0;
+            }
             /*
             Logger.Log("Working " + SizeConverter.ByteSizeToString(process.WorkingSet64));
             Logger.Log("Private " + SizeConverter.ByteSizeToString(process.PrivateMemorySize64));
