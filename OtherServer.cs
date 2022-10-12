@@ -132,8 +132,12 @@ namespace MasterServer
 
         public void Kill()
         {
+            if (process == null || process.HasExited)
+            {
+                Logger.Log("Cannot kill server", LoggingType.Warning);
+                return;
+            }
             Logger.Log("Killing server " + name, LoggingType.Important);
-            if (process == null || process.HasExited) return;
             process.Kill();
         }
 
