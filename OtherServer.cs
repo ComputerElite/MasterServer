@@ -31,7 +31,7 @@ namespace MasterServer
         public DateTime fakeLastStartTime { get { return lastStartTime; } }
         public DateTime lastStartTime = DateTime.MinValue;
         public int notRunningTimes = 0;
-        bool blockLogging = false;
+        int loggingThreadsStarted = 0;
 
         public void Start()
         {
@@ -53,7 +53,7 @@ namespace MasterServer
                 Logger.Log(e.ToString(), LoggingType.Error);
             }
             status = "Starting up";
-            blockLogging = true;
+            loggingThreadsStarted++;
             lastStartTime = DateTime.Now;
             ProcessStartInfo i = new ProcessStartInfo
             {
@@ -69,8 +69,9 @@ namespace MasterServer
             process = Process.Start(i);
             logThread = new Thread(() =>
             {
+                int loggingThread = loggingThreadsStarted;
                 Logger.Log("Logging thread for " + name + " started", LoggingType.Important);
-                while (!process.HasExited && !blockLogging)
+                while (!process.HasExited && loggingThreadsStarted == loggingThread)
                 {
                     try
                     {
@@ -86,7 +87,6 @@ namespace MasterServer
                 }
             });
             UpdateStatus();
-            blockLogging = false;
             logThread.Start();
         }
 
