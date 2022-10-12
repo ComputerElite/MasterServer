@@ -29,7 +29,7 @@ namespace MasterServer
         public string status { get; set; } = "Starting up";
         public int restartMaxRam { get; set; } = 200 * 1024 * 1024;
         public DateTime fakeLastStartTime { get { return lastStartTime; } }
-        public DateTime lastStartTime = DateTime.Now;
+        public DateTime lastStartTime = DateTime.MinValue;
         public int notRunningTimes = 0;
         bool blockLogging = false;
 
