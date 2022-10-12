@@ -103,9 +103,10 @@ namespace MasterServer
 
         public long GetRamUsage()
         {
+            Process process;
             try
             {
-                Process process = Process.GetProcessById(this.process.Id);
+                process = Process.GetProcessById(this.process.Id);
             } catch(Exception e)
             {
                 Logger.Log("Could not get ram usage as the server is not running. This should be fixed automatically", LoggingType.Warning);
