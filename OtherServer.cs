@@ -36,9 +36,9 @@ namespace MasterServer
         public void Start()
         {
             if (!File.Exists(dll)) return;
-            if(lastStartTime + TimeSpan.FromSeconds(20) > DateTime.Now)
+            if(lastStartTime + TimeSpan.FromSeconds(40) > DateTime.Now)
             {
-                Logger.Log("Will not start " + name + " as it's already been attempted to start less than 20 seconds ago", LoggingType.Warning);
+                Logger.Log("Will not start " + name + " as it's already been attempted to start less than 40 seconds ago", LoggingType.Warning);
                 return;
             }
             status = "Starting up";
@@ -124,7 +124,7 @@ namespace MasterServer
         {
             if (process == null || process.HasExited)
             {
-                Logger.Log("Cannot kill server", LoggingType.Warning);
+                Logger.Log("Cannot kill server cause " + (process == null ? "Process is null" : "Process has exited"), LoggingType.Warning);
                 return;
             }
             Logger.Log("Killing server " + name, LoggingType.Important);
