@@ -75,7 +75,7 @@ namespace MasterServer
         {
             while(true)
             {
-                Thread.Sleep(120000);
+                Thread.Sleep(30000);
                 for (int i = 0; i < servers.Count; i++)
                 {
                     servers[i].UpdateStatus();
