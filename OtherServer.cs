@@ -3,6 +3,7 @@ using ComputerUtils.VarUtils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +16,9 @@ namespace MasterServer
         public string dll { get; set; } = "";
         public string folder { get
             {
-                return Path.GetDirectoryName(dll);
+                string f = Path.GetDirectoryName(dll);
+                if (!f.EndsWith(Path.DirectorySeparatorChar)) f += Path.DirectorySeparatorChar;
+                return f;
             } }
         public Process process;
         public Thread logThread = null;
@@ -33,10 +36,10 @@ namespace MasterServer
         public int notRunningTimes = 0;
         int loggingThreadsStarted = 0;
 
-        public void Start()
+        public void Start(bool force = false)
         {
             if (!File.Exists(dll)) return;
-            if(lastStartTime + TimeSpan.FromSeconds(40) > DateTime.Now)
+            if(lastStartTime + TimeSpan.FromSeconds(40) > DateTime.Now && !force)
             {
                 Logger.Log("Will not start " + name + " as it's already been attempted to start less than 40 seconds ago", LoggingType.Warning);
                 return;
@@ -136,6 +139,26 @@ namespace MasterServer
             string l = log;
             log = "";
             return l;
+        }
+
+        internal void UpdateServer(byte[] updateZip)
+        {
+            Kill();
+            Logger.Log("Updating OculusDB", LoggingType.Important);
+            string updateZipName = DateTime.Now.Ticks + ".zip";
+            File.WriteAllBytes(updateZipName, updateZip);
+            using (ZipArchive archive = ZipFile.OpenRead(updateZipName))
+            {
+                foreach (ZipArchiveEntry entry in archive.Entries)
+                {
+                    String name = entry.FullName;
+                    if (name.EndsWith("/")) continue;
+                    if (name.Contains("/")) Directory.CreateDirectory(folder + Path.GetDirectoryName(name));
+                    entry.ExtractToFile(folder + entry.FullName, true);
+                    Logger.Log("Extracting " + name + " to " + folder + entry.FullName);
+                }
+            }
+            File.Delete(updateZipName);
         }
     }
 }

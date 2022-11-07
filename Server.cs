@@ -166,6 +166,17 @@ namespace MasterServer
                 Updater.StartUpdateNetApp(request.bodyBytes, Path.GetFileName(Assembly.GetExecutingAssembly().Location), Env.workingDir);
                 return true;
             }));
+            // update other server
+            server.AddRoute("POST", "/api/updateserver/", new Func<ServerRequest, bool>(request =>
+            {
+                if (!IsUserAdmin(request)) return true;
+                int i = GetServerIndex(request.queryString.Get("server"));
+                SendMasterWebhookMessage("Update for " + servers[i].name + " deploying", "`" + request.queryString.Get("changelog") + "`", 0x42BBEB);
+                request.SendString("Starting update");
+                servers[i].UpdateServer(request.bodyBytes);
+                servers[i].Start(true);
+                return true;
+            }));
             // kill server
             server.AddRoute("POST", "/api/kill/", new Func<ServerRequest, bool>(request =>
             {

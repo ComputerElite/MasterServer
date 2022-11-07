@@ -44,7 +44,15 @@
             }
 
             const progress = document.getElementById("progress")
+            function UpdateOther(servername) {
+                PostFileChangelog(`/api/updateserver?server=${servername}&changelog=`)
+            }
+
             function UpdateMaster() {
+                PostFileChangelog(`/api/updatemasterserver?changelog=`)
+            }
+
+            function PostFileChangelog(url) {
                 var input = document.createElement("input")
                 input.setAttribute("type", "file")
 
@@ -70,7 +78,7 @@
 
                             }
                         }, false);
-                        xhr.open("POST", "/api/updatemasterserver?changelog=" + changelog)
+                        xhr.open("POST", url + changelog)
                         xhr.send(reader.result)
 
                     }
@@ -175,6 +183,10 @@
                             <br>
                             <label>
                                 <input onclick="Restart('${server.name}')" class="red" type="button" value="Restart">
+                            </label>
+                            <br>
+                            <label>
+                                <input onclick="UpdateOther('${server.name}')" type="button" value="Update Server">
                             </label>
                             <br>
                             <label>
