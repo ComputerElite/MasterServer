@@ -244,7 +244,8 @@ namespace MasterServer
                         config.serversToWatch[i].logThread = s[i].logThread;
                         config.serversToWatch[i].lastStartTime = s[i].lastStartTime;
                     }
-                }
+					if (config.serversToWatch[i].dll == "") config.serversToWatch[i].dll = "/home/ComputerElite/test.dll";
+				}
                 foreach(OtherServer x in config.serversToWatch)
                 {
                     if(!File.Exists(x.dll) && x.dll != "")
