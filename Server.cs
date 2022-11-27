@@ -248,7 +248,7 @@ namespace MasterServer
 				}
                 foreach(OtherServer x in config.serversToWatch)
                 {
-                    if(!File.Exists(x.dll) && x.dll != "")
+                    if(!File.Exists(x.dll) && x.dll != "" && s.Any(y => y.name == x.name))
                     {
                         request.SendString("this dll does not exist!", "text/plain", 400);
                         config.serversToWatch = s;
