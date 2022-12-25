@@ -28,7 +28,12 @@ namespace MasterServer
         public int restartIntervalInSeconds { get; set; } = 60 * 60 * 24;
         public long ramUsage { get; set; } = 0;
         public string ramUsageString { get { return SizeConverter.ByteSizeToString(ramUsage); } }
-        public bool shouldRestartIfMoreRam { get; set; } = false;
+		public string currentCommit { get
+            {
+                if (File.Exists(folder + "commit.txt")) return File.ReadAllText(File.Exists(folder) + "commit.txt");
+                return "unknown";
+            } }
+		public bool shouldRestartIfMoreRam { get; set; } = false;
         public string status { get; set; } = "Starting up";
         public int restartMaxRam { get; set; } = 200 * 1024 * 1024;
         public DateTime fakeLastStartTime { get { return lastStartTime; } }
