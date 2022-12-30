@@ -80,7 +80,7 @@ namespace MasterServer
                         if(logClient != null && !logClient.handler.closed)
                         {
                             logClient.SendString(RequestAndResetCurrentLog());
-                        } else if(logClient.handler.closed)
+                        } else if(logClient != null && logClient.handler.closed)
                         {
                             logClient = null;
                         }
