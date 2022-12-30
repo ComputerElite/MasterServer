@@ -1,5 +1,6 @@
 ﻿using ComputerUtils.Logging;
 using ComputerUtils.VarUtils;
+using ComputerUtils.Webserver;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,6 +24,7 @@ namespace MasterServer
         public Process process;
         public Thread logThread = null;
         public string log = "";
+        public SocketServerRequest logClient = null;
         public int maxLogLength { get; set; } = 50000;
         public bool shouldRestartInInterval { get; set; } = false;
         public int restartIntervalInSeconds { get; set; } = 60 * 60 * 24;
@@ -75,6 +77,13 @@ namespace MasterServer
                     {
 
                         log += process.StandardOutput.ReadLine() + "\n";
+                        if(logClient != null && !logClient.handler.closed)
+                        {
+                            logClient.SendString(RequestAndResetCurrentLog());
+                        } else if(logClient.handler.closed)
+                        {
+                            logClient = null;
+                        }
                         if (log.Length >= maxLogLength) log = log.Substring(log.Length - maxLogLength, maxLogLength);
                     } catch(Exception e)
                     {

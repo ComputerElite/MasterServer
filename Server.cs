@@ -37,7 +37,12 @@ namespace MasterServer
             return GetToken(request, send403) == config.masterToken;
         }
 
-        public void SetUpServers()
+		public bool IsUserAdmin(string token, bool send403 = true)
+		{
+			return token == config.masterToken;
+		}
+
+		public void SetUpServers()
         {
             Logger.Log("Setting up servers from Config");
             for(int i = 0; i < servers.Count; i++)
@@ -218,6 +223,11 @@ namespace MasterServer
                 request.SendString(servers[index].RequestAndResetCurrentLog());
                 return true;
             }), true);
+            server.AddWSRoute("/", new Action<SocketServerRequest>(request =>
+			{
+				if (!IsUserAdmin(request.bodyString.Split('|')[0])) return;
+				config.serversToWatch[GetServerIndex(request.bodyString.Split('|')[1])].logClient = request;
+			}));
             // get servers
             server.AddRoute("GET", "/api/servers/", new Func<ServerRequest, bool>(request =>
             {
