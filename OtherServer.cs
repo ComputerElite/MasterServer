@@ -32,7 +32,7 @@ namespace MasterServer
         public string ramUsageString { get { return SizeConverter.ByteSizeToString(ramUsage); } }
 		public string currentCommit { get
             {
-                if (File.Exists(folder + "commit.txt")) return File.ReadAllText(File.Exists(folder) + "commit.txt");
+                if (File.Exists(folder + "commit.txt")) return File.ReadAllText(folder + "commit.txt");
                 return "unknown";
             } }
 		public bool shouldRestartIfMoreRam { get; set; } = false;
