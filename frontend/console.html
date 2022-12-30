@@ -18,38 +18,44 @@
             var search = new URLSearchParams(location.search)
             var server = search.get("server")
             document.getElementById("header").innerHTML = "Log of " + server
-            UpdateLog()
-            setInterval(() => {
-                UpdateLog()
-            }, 500);
+            
+            var ws = new WebSocket(location.protocol.replace("http", "ws") + "//" + window.location.host)
+            function Send(msg) {
+                ws.send(GetCookie("token") + "|" + msg)
+            }
 
-            function UpdateLog() {
-                fetch(`/api/log/${server}`).then(res => {
-                    res.text().then(log => {
-                        const l = document.getElementById("log")
-                        var scroll = l.scrollHeight - l.clientHeight <= l.scrollTop + 1;
-                        var text = ""
-                        for(const line of log.split("\n")) {
-                            console.log(line)
-                            var prefix = line.substring(0, 48).toLowerCase()
-                            var color = "#FFFFFF"
-                            if(prefix.includes("error")) color = "#FF0000"
-                            else if(prefix.includes("info")) color = "#FFFFFF"
-                            else if(prefix.includes("crash")) color = "#FF0000"
-                            else if(prefix.includes("warning")) color = "#FFFF00"
-                            else if(prefix.includes("debug")) color = "#FFFF00"
-                            else if(prefix.includes("abdintern")) color = "#FFFF00"
-                            else if(prefix.includes("adb")) color = "#8B8000"
-                            else if(prefix.includes("important")) color = "#FF00FF"
+            ws.onopen = () => {
+                Send(server)
+            }
 
-                            text += `<span style="color: ${color}">${line.replace(/ /g, "&nbsp;")}</span>`
-                        }
-                        l.innerHTML += text
-                        if(scroll) {
-                            l.scrollTop = l.scrollHeight
-                        }
-                    })
-                })
+            ws.onmessage = e => {
+                var log = e.data
+                DisplayLog(log)
+            }
+
+            function DisplayLog(log) {
+                const l = document.getElementById("log")
+                var scroll = l.scrollHeight - l.clientHeight <= l.scrollTop + 1;
+                var text = ""
+                for(const line of log.split("\n")) {
+                    console.log(line)
+                    var prefix = line.substring(0, 48).toLowerCase()
+                    var color = "#FFFFFF"
+                    if(prefix.includes("error")) color = "#FF0000"
+                    else if(prefix.includes("info")) color = "#FFFFFF"
+                    else if(prefix.includes("crash")) color = "#FF0000"
+                    else if(prefix.includes("warning")) color = "#FFFF00"
+                    else if(prefix.includes("debug")) color = "#FFFF00"
+                    else if(prefix.includes("abdintern")) color = "#FFFF00"
+                    else if(prefix.includes("adb")) color = "#8B8000"
+                    else if(prefix.includes("important")) color = "#FF00FF"
+
+                    text += `<span style="color: ${color}">${line.replace(/ /g, "&nbsp;")}</span>`
+                }
+                l.innerHTML += text
+                if(scroll) {
+                    l.scrollTop = l.scrollHeight
+                }
             }
         </script>
     </body>
