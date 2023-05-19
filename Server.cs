@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using ComputerUtils.RandomExtensions;
 
 namespace MasterServer
 {
@@ -48,8 +49,10 @@ namespace MasterServer
             for(int i = 0; i < servers.Count; i++)
             {
                 Logger.Log("Starting up " + servers[i].name);
+                if (servers[i].serverToken == "") servers[i].serverToken = RandomExtension.CreateToken();
                 servers[i].Start();
             }
+            config.Save();
         }
 
         public int GetServerIndex(string name)
@@ -199,8 +202,9 @@ namespace MasterServer
             // restart server
             server.AddRoute("POST", "/api/restart/", new Func<ServerRequest, bool>(request =>
             {
-                if (!IsUserAdmin(request)) return true;
                 int index = GetServerIndex(request.pathDiff);
+                string token = request.queryString.Get("token") ?? "";
+                if (!IsUserAdmin(request) && servers[index].serverToken != token) return true;
                 if (index == -1)
                 {
                     request.SendString("A server with this name does not exist", "text/plain", 400);

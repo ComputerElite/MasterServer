@@ -22,6 +22,7 @@ namespace MasterServer
                 return f;
             } }
         public Process process;
+        public string serverToken { get; set; } = ""; // Allows for server restarts. Intended to only be used by the server which is running this server
         public Thread logThread = null;
         public string log = "";
         public SocketServerRequest logClient = null;
@@ -92,6 +93,10 @@ namespace MasterServer
                         Restart();
                     }
                 }
+                Logger.Log("Process exited");
+                string error = process.StandardError.ReadToEnd();
+                log += process.StandardOutput.ReadToEnd();
+                File.WriteAllText(Env.dataDir + name + " " + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + ".log", "StandardError:\n\n" + error + "\n\n\nStandardOutput:\n\n" + log);
             });
             UpdateStatus();
             logThread.Start();
