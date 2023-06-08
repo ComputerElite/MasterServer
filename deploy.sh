@@ -13,12 +13,12 @@ echo Pushed to GitHub
 
 echo Commit id $id
 
-cd bin/Debug/net6.0/
+cd bin/Release/net6.0/
 echo Deleting existing update zip
 rm net6.0.zip
 
 echo Creating new update zip
-7z a net6.0.zip *.dll *.pdb *.exe *.json frontend ref runtimes
+7z a net6.0.zip *.dll *.pdb *.exe *.json frontend ref runtimes *.txt
 
 echo Created update zip
 echo Changelog:
