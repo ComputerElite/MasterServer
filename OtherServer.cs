@@ -94,8 +94,23 @@ namespace MasterServer
                     }
                 }
                 Logger.Log("Process exited");
-                string error = process.StandardError.ReadToEnd();
-                log += process.StandardOutput.ReadToEnd();
+                string error = "";
+                try
+                {
+                    error = process.StandardError.ReadToEnd();
+                }
+                catch (Exception e)
+                {
+                    Logger.Log("Error while capturing standard error: " + e);
+                }
+                try
+                {
+                    log += process.StandardOutput.ReadToEnd();
+                }
+                catch (Exception e)
+                {
+                    Logger.Log("Error while capturing standard output: " + e);
+                }
                 File.WriteAllText(Env.dataDir + name + " " + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + ".log", "StandardError:\n\n" + error + "\n\n\nStandardOutput:\n\n" + log);
             });
             UpdateStatus();
