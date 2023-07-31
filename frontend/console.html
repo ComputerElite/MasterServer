@@ -49,6 +49,26 @@
                     else if(prefix.includes("abdintern")) color = "#FFFF00"
                     else if(prefix.includes("adb")) color = "#8B8000"
                     else if(prefix.includes("important")) color = "#FF00FF"
+                    
+                    var t = []
+                    var path = false
+                    for(const word of line.split(" ")) {
+                        if(word == "POST" || word == "GET" || word == "PUT" || word == "DELETE") {
+                            t.push(`<span style="color: #00FF00">${word}</span>`)
+                            path = true
+                            continue
+                        }
+                        if(path == true) {
+                            if(word == "from") {
+                                path = false;
+                                t.push(word)
+                                continue;
+                            }
+                            t.push(`<span style="color: #FF00FF">${word}</span>`)
+                            continue
+                        }
+                        t.push(word)
+                    }
 
                     text += `<span style="color: ${color}">${line.replace(/ /g, "&nbsp;")}</span>`
                 }
