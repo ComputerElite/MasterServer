@@ -38,7 +38,7 @@
                 var scroll = l.scrollHeight - l.clientHeight <= l.scrollTop + 1;
                 var text = ""
                 for(const line of log.split("\n")) {
-                    console.log(line)
+                    //console.log(line)
                     var prefix = line.substring(0, 48).toLowerCase()
                     var color = "#FFFFFF"
                     if(prefix.includes("error")) color = "#FF0000"
@@ -54,23 +54,23 @@
                     var path = false
                     for(const word of line.split(" ")) {
                         if(word == "POST" || word == "GET" || word == "PUT" || word == "DELETE") {
-                            t.push(`<span style="color: #00FF00">${word}</span>`)
+                            t.push(`<span style="color: #00FF00; display: inline;">${word}</span>`)
                             path = true
                             continue
                         }
-                        if(path == true) {
+                        if(path) {
                             if(word == "from") {
                                 path = false;
                                 t.push(word)
                                 continue;
                             }
-                            t.push(`<span style="color: #FF00FF">${word}</span>`)
+                            t.push(`<span style="color: #FF00FF; display: inline;">${word}</span>`)
                             continue
                         }
                         t.push(word)
                     }
 
-                    text += `<span style="color: ${color}">${t.join(" ").replace(/ /g, "&nbsp;")}</span>`
+                    text += `<span style="color: ${color}">${t.join("&nbsp;")}</span>`
                 }
                 l.innerHTML += text
                 if(scroll) {
