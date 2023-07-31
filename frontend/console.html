@@ -70,7 +70,7 @@
                         t.push(word)
                     }
 
-                    text += `<span style="color: ${color}">${line.replace(/ /g, "&nbsp;")}</span>`
+                    text += `<span style="color: ${color}">${t.join(" ").replace(/ /g, "&nbsp;")}</span>`
                 }
                 l.innerHTML += text
                 if(scroll) {
