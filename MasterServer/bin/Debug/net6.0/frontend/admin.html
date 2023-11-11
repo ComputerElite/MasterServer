@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="theme-color" content="#63fac3">
+        <meta property="og:site_name" content="Master Server">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/style.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,700italic" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <h1>Master Server</h1>
+        <input type="text" id="newServer" placeholder="Server name">
+        <input onclick="AddServer()" type="button" value="Add Server">
+
+        <input type="button" value="Update Master server" onclick="UpdateMaster()">
+        <div style="width: 90%; background-color: var(--hightlightColor); height: 10px;"><div style="background-color: var(--interactableColor); height: 100%; width: 0%;" id="progress"></div></div>
+        
+        <div class="textbox" id="text"></div>
+        <div class="tabContainer" id="tabContainer">
+            
+        </div>
+        <script src="/script.js"></script>
+        <script>
+            const tabContainer = document.getElementById("tabContainer")
+            UpdateTabs()
+            var servers = []
+
+            function UpdateTabs() {
+                fetch("/api/servers").then(res => {
+                    res.json().then(res => {
+                        servers = res
+                        var tabs = "";
+                        var tabContent = ""
+                        for(const s of servers) {
+                            tabs += FormatTab(s)
+                            tabContent += FormatTabContent(s)
+                        }
+                        tabContainer.innerHTML = ` <div class="tab">
+                                                        ${tabs}
+                                                        </div>
+                                                    ${tabContent}`
+                    })
+                })
+            }
+
+            const progress = document.getElementById("progress")
+            function UpdateOther(servername) {
+                PostFileChangelog(`/api/updateserver?server=${servername}&changelog=`)
+            }
+
+            function UpdateMaster() {
+                PostFileChangelog(`/api/updatemasterserver?changelog=`)
+            }
+
+            function PostFileChangelog(url) {
+                var input = document.createElement("input")
+                input.setAttribute("type", "file")
+
+                input.onchange = function (e) {
+                    if (!this.files[0]) {
+                        return;
+                    }
+
+                    var reader = new FileReader();
+                    var fileName = this.files[0].name
+                    reader.onloadend = function () {
+                        var changelog = prompt("Enter changelog (optional)")
+                        var xhr = new XMLHttpRequest()
+                        xhr.upload.addEventListener("progress", function(evt) {
+                            if (evt.lengthComputable) {
+                                var percentComplete = evt.loaded / evt.total;
+                                percentComplete = parseInt(percentComplete * 100);
+                                progress.style.width = percentComplete + "%"
+
+                                if (percentComplete === 100) {
+                                    alert("Update has started. Please reaload the page in a few seconds")
+                                }
+
+                            }
+                        }, false);
+                        xhr.open("POST", url + changelog)
+                        xhr.send(reader.result)
+
+                    }
+                    reader.readAsArrayBuffer(this.files[0]);
+                }
+
+                input.click()
+            }
+
+            function Save(serverName) {
+                TextBoxText(`${serverName}box`, `Requesting save...`)
+                servers = servers.filter(x => x.name != serverName)
+                servers.push({
+                    name: serverName,
+                    dll: document.getElementById(`${serverName}Location`).value,
+                    shouldRestartInInterval: document.getElementById(`${serverName}ShouldRestartInterval`).checked,
+                    restartIntervalInSeconds: parseInt(document.getElementById(`${serverName}RestartInterval`).value),
+                    shouldRestartIfMoreRam: document.getElementById(`${serverName}ShouldRestartRam`).checked,
+                    restartMaxRam: parseInt(document.getElementById(`${serverName}RestartRam`).value) * 1024 * 1024,
+                })
+                POSTRequestWithResponse(`/api/servers`, `${serverName}box`, JSON.stringify(servers), true)
+            }
+
+            function AddServer() {
+                var toSave = servers
+                toSave.push({name: document.getElementById("newServer").value})
+                POSTRequestWithResponse(`/api/servers`, `text`, JSON.stringify(toSave), true)
+            }
+
+            function Remove(serverName) {
+                TextBoxText(`${serverName}box`, `Requesting removal...`)
+                servers = servers.filter(x => x.name != serverName)
+                POSTRequestWithResponse(`/api/servers`, `${serverName}box`, JSON.stringify(servers))
+            }
+
+            function Restart(serverName) {
+                TextBoxText(`${serverName}box`, `Requesting restart...`)
+                POSTRequestWithResponse(`/api/restart/${serverName}`, `${serverName}box`)
+            }
+            function Kill(serverName) {
+                TextBoxText(`${serverName}box`, `Requesting kill...`)
+                POSTRequestWithResponse(`/api/kill/${serverName}`, `${serverName}box`)
+            }
+
+            function Log(serverName) {
+                location = `/console?server=${serverName}`
+            }
+
+            function POSTRequestWithResponse(url, textbox, body = "", reload = false) {
+                fetch(url, {
+                    method: "POST",
+                    body: body
+                }).then(res => {
+                    res.text().then(t => {
+                        if(res.status == 200) TextBoxGood(textbox, t)
+                        else TextBoxError(textbox, t)
+                        setTimeout(() => {
+                            HideTextBox(textbox)
+                        }, 5000)
+                        if(reload) UpdateTabs()
+                    })
+                })
+            }
+
+            function FormatTab(server) {
+                return `<button id="${server.name}Button" class="tablinks" onclick="openTab(this, '${server.name}');">${server.name}</button>`
+            }
+
+            function FormatTabContent(server) {
+                return `<div class="tabcontent" id="${server.name}" class="active">
+                            <div class="big">Last Restart: <b>${new Date(server.fakeLastStartTime).toLocaleString()}</b></div>
+                            <div class="big">Current state: <b>${server.status}</b></div>
+                            <div class="big">Ram usage: <b>${server.ramUsageString}</b></div>
+                            <div class="big">Current commit: <b>${server.currentCommit}</b></div>
+                            <label>
+                                <text>Dll Location</text>
+                                <input type="text" class="wide" id="${server.name}Location" value="${server.dll}">
+                            </label>
+                            <label>
+                                <text>Should Server restart automatically in interval?</text>
+                                <input type="checkbox" id="${server.name}ShouldRestartInterval" ${server.shouldRestartInInterval ? `checked` : ``}>
+                            </label>
+                            <label>
+                                <text>Restart Interval in seconds</text>
+                                <input type="number" class="wide" id="${server.name}RestartInterval" value="${server.restartIntervalInSeconds}">
+                            </label>
+                            <label>
+                                <text>Should Server restart automatically?</text>
+                                <input type="checkbox" id="${server.name}ShouldRestartRam" ${server.shouldRestartIfMoreRam ? `checked` : ``}>
+                            </label>
+                            <label>
+                                <text>Restart ram trigger (MB)</text>
+                                <input type="number" class="wide" id="${server.name}RestartRam" value="${server.restartMaxRam / 1024 / 1024}">
+                            </label>
+                            <br>
+                            <label>
+                                <input onclick="Log('${server.name}')" type="button" value="Open Log">
+                            </label>
+                            <br>
+                            <label>
+                                <input onclick="Save('${server.name}')" type="button" value="Save">
+                            </label>
+                            <br>
+                            <label>
+                                <input onclick="Restart('${server.name}')" class="red" type="button" value="Restart">
+                            </label>
+                            <br>
+                            <label>
+                                <input onclick="UpdateOther('${server.name}')" type="button" value="Update Server">
+                            </label>
+                            <br>
+                            <label>
+                                <input onclick="Kill('${server.name}')" class="red" type="button" value="Kill">
+                            </label>
+                            <br>
+                            <br>
+                            <label>
+                                <input onclick="Remove('${server.name}')" class="red" type="button" value="Remove Server from monitoring (requires system restart)">
+                            </label>
+                            <div class="textbox" id="${server.name}box"></div>
+                        </div>`
+            }
+        </script>
+    </body>
+</html>

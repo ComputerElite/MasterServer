@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MasterServer", "MasterServer\MasterServer.csproj", "{A6214EE8-7927-4A9E-9C28-25F835E2977B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComputerUtils", "..\ComputerUtils\ComputerUtils\ComputerUtils.csproj", "{F448A761-AEA8-4969-9367-476D9B817BDE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A6214EE8-7927-4A9E-9C28-25F835E2977B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6214EE8-7927-4A9E-9C28-25F835E2977B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6214EE8-7927-4A9E-9C28-25F835E2977B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6214EE8-7927-4A9E-9C28-25F835E2977B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F448A761-AEA8-4969-9367-476D9B817BDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F448A761-AEA8-4969-9367-476D9B817BDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F448A761-AEA8-4969-9367-476D9B817BDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F448A761-AEA8-4969-9367-476D9B817BDE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
