@@ -165,7 +165,9 @@ namespace MasterServer
                 return;
             }
             Logger.Log("Killing server " + name, LoggingType.Important);
-            process.Kill();
+            process.Kill(true); // Kill all child processes too
+            process.WaitForExit(10000); // Wait up to 10 seconds for the process to exit
+            Thread.Sleep(100); // Wait 100 ms for good measure
         }
 
         public string RequestAndResetCurrentLog()
