@@ -31,7 +31,7 @@ namespace MasterServer
             Env.config = Config.LoadConfig();
             if (cla.HasArgument("update"))
             {
-                Updater.UpdateNetApp(Path.GetFileName(Assembly.GetExecutingAssembly().Location), Env.workingDir);
+                Updater.UpdateNetApp(Path.GetFileName(Assembly.GetExecutingAssembly().Location), null);
             }
             if (Env.config.masterToken == "") Env.config.masterToken = RandomExtension.CreateToken();
             Env.config.Save();

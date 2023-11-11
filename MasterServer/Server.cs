@@ -171,7 +171,7 @@ namespace MasterServer
                     Logger.Log("Killing " + s.name);
                     s.Kill();
                 } 
-                Updater.StartUpdateNetApp(request.bodyBytes, Path.GetFileName(Assembly.GetExecutingAssembly().Location), Env.workingDir);
+                Updater.StartUpdateNetApp(request.bodyBytes, Path.GetFileName(Assembly.GetExecutingAssembly().Location), null);
                 return true;
             }));
             // update other server

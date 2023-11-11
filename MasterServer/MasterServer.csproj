@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ComputerUtils\ComputerUtils\ComputerUtils.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="frontend\admin.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -27,6 +23,10 @@
     <None Update="frontend\console.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ComputerUtils\ComputerUtils\ComputerUtils.csproj" />
   </ItemGroup>
 
 </Project>
