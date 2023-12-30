@@ -12,31 +12,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - run: pwd
     - uses: actions/checkout@v3
       with:
-        path: 'MasterServer/MasterServer'
-    - uses: actions/checkout@v3
-      with:
-        repository: 'ComputerElite/ComputerUtils'
-        path: 'ComputerUtils/'
+        submodules: recursive
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 6.0.x
+    - run: cd MasterServer
     - name: Restore dependencies
-      working-directory: 'MasterServer/MasterServer'
       run: dotnet restore
     - name: Build
-      working-directory: 'MasterServer/MasterServer'
-      run: dotnet build --no-restore
-    - name: Zip build
-      uses: papeloto/action-zip@v1
-      with:
-        files: MasterServer/MasterServer/bin/Debug/net6.0
-        dest: net6.0.zip
-    - name: Upload net6.0.zip
+      run: dotnet build
+    - name: Copy frontend
+      run: |
+        mkdir -p MasterServer/bin/Debug/net6.0/frontend
+        mkdir -p MasterServer/bin/Release/net6.0/frontend
+        cp -r MasterServer/frontend/* MasterServer/bin/Debug/net6.0/frontend
+        cp -r MasterServer/frontend/* MasterServer/bin/Release/net6.0/frontend
+    - name: Upload Debug net6.0.zip
       uses: actions/upload-artifact@v3
       with:
-        name: net6.0.zip
-        path: MasterServer/MasterServer/bin/Debug/net6.0
+        name: net6.0-Debug
+        path: MasterServer/bin/Debug/net6.0
+    - name: Upload Release net6.0.zip
+      uses: actions/upload-artifact@v3
+      with:
+        name: net6.0-Release
+        path: MasterServer/bin/Release/net6.0
