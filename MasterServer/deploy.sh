@@ -4,7 +4,7 @@ cp -R bin/Debug/net6.0/frontend ./
 read -p "Changelog: " changelog
 echo Pushing to GitHub
 
-git add *
+git add .
 git commit -m "$changelog"
 id=$(git rev-parse HEAD)
 git push origin main

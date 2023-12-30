@@ -199,6 +199,35 @@ namespace MasterServer
                 request.SendString("Killed " + servers[index].name);
                 return true;
             }), true);
+            // enable server
+            server.AddRoute("POST", "/api/enable/", new Func<ServerRequest, bool>(request =>
+            {
+                if (!IsUserAdmin(request)) return true;
+                int index = GetServerIndex(request.pathDiff);
+                if (index == -1)
+                {
+                    request.SendString("A server with this name does not exist", "text/plain", 400);
+                    return true;
+                }
+                servers[index].enabled = true;
+                servers[index].Restart();
+                request.SendString("Enabled and started " + servers[index].name);
+                return true;
+            }), true);
+            server.AddRoute("POST", "/api/disable/", new Func<ServerRequest, bool>(request =>
+            {
+                if (!IsUserAdmin(request)) return true;
+                int index = GetServerIndex(request.pathDiff);
+                if (index == -1)
+                {
+                    request.SendString("A server with this name does not exist", "text/plain", 400);
+                    return true;
+                }
+                servers[index].enabled = false;
+                servers[index].Kill();
+                request.SendString("Disabled and killed " + servers[index].name);
+                return true;
+            }), true);
             // restart server
             server.AddRoute("POST", "/api/restart/", new Func<ServerRequest, bool>(request =>
             {

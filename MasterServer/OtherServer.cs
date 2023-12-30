@@ -21,11 +21,12 @@ namespace MasterServer
                 if (!f.EndsWith(Path.DirectorySeparatorChar)) f += Path.DirectorySeparatorChar;
                 return f;
             } }
-        public Process process;
+        public Process? process;
         public string serverToken { get; set; } = ""; // Allows for server restarts. Intended to only be used by the server which is running this server
         public Thread logThread = null;
         public string log = "";
         public SocketServerRequest logClient = null;
+        public bool enabled { get; set; } = true;
         public int maxLogLength { get; set; } = 50000;
         public bool shouldRestartInInterval { get; set; } = false;
         public int restartIntervalInSeconds { get; set; } = 60 * 60 * 24;
@@ -44,8 +45,13 @@ namespace MasterServer
         public int notRunningTimes = 0;
         int loggingThreadsStarted = 0;
 
+        /// <summary>
+        /// Starts a server
+        /// </summary>
+        /// <param name="force">Whether to skip the check if the server has already been started or not</param>
         public void Start(bool force = false)
         {
+            if (!enabled) return;
             if (!File.Exists(dll)) return;
             if(lastStartTime + TimeSpan.FromSeconds(40) > DateTime.Now && !force)
             {
@@ -152,6 +158,7 @@ namespace MasterServer
 
         public void Restart()
         {
+            if (!enabled) return;
             Logger.Log("Restarting server " + name, LoggingType.Important);
             Kill();
             Start();
