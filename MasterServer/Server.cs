@@ -177,10 +177,11 @@ namespace MasterServer
             // update other server
             server.AddRoute("POST", "/api/updateserver/", new Func<ServerRequest, bool>(request =>
             {
-                if (!IsUserAdmin(request)) return true;
+                string token = request.queryString.Get("token") ?? "";
                 int i = GetServerIndex(request.queryString.Get("server"));
+                if (!IsUserAdmin(request) && servers[i].serverToken != token) return true;
                 SendMasterWebhookMessage("Update for " + servers[i].name + " deploying", "`" + request.queryString.Get("changelog") + "`", 0x42BBEB);
-                request.SendString("Starting update");
+                request.SendString("Starting update");  
                 servers[i].UpdateServer(request.bodyBytes);
                 servers[i].Start(true);
                 return true;
