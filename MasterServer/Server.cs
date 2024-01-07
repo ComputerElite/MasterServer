@@ -179,7 +179,11 @@ namespace MasterServer
             {
                 string token = request.queryString.Get("token") ?? "";
                 int i = GetServerIndex(request.queryString.Get("server"));
-                if (!IsUserAdmin(request) && servers[i].serverToken != token) return true;
+                if (!IsUserAdmin(request, false) && servers[i].serverToken != token)
+                {
+                    request.Send403();
+                    return true;
+                }
                 SendMasterWebhookMessage("Update for " + servers[i].name + " deploying", "`" + request.queryString.Get("changelog") + "`", 0x42BBEB);
                 request.SendString("Starting update");  
                 servers[i].UpdateServer(request.bodyBytes);
@@ -234,7 +238,11 @@ namespace MasterServer
             {
                 int index = GetServerIndex(request.pathDiff);
                 string token = request.queryString.Get("token") ?? "";
-                if (!IsUserAdmin(request) && servers[index].serverToken != token) return true;
+                if (!IsUserAdmin(request, false) && servers[index].serverToken != token)
+                {
+                    request.Send403();
+                    return true;
+                }
                 if (index == -1)
                 {
                     request.SendString("A server with this name does not exist", "text/plain", 400);
