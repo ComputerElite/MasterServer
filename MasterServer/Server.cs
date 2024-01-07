@@ -276,7 +276,7 @@ namespace MasterServer
             server.AddRoute("POST", "/api/servers/", new Func<ServerRequest, bool>(request =>
             {
                 if (!IsUserAdmin(request)) return true;
-                List<OtherServer> s = config.serversToWatch;
+                List<OtherServer> s = new List<OtherServer>(config.serversToWatch);
                 config.serversToWatch = JsonSerializer.Deserialize<List<OtherServer>>(request.bodyString);
                 for(int i = 0; i < servers.Count; i++)
                 {
