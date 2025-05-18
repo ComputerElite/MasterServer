@@ -36,7 +36,7 @@ jobs:
         name: net6.0-Debug
         path: MasterServer/bin/Debug/net6.0
     - name: Upload Release net6.0.zip
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: net6.0-Release
         path: MasterServer/bin/Release/net6.0
